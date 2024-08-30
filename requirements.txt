@@ -5,3 +5,15 @@ seaborn
 statsmodels
 nltk
 nltk.download('vader_lexicon')
+TA-Lib
+pandas
+matplotlib
+plotly
+pyfolio-reloaded
+zipline-reloadedq
+numpy
+seaborn
+statsmodels
+nltk
+plotly
+talib
