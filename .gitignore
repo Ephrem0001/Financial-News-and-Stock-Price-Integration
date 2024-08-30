@@ -1,3 +1,8 @@
 /data
 /.venv
+<<<<<<< HEAD
 /.venv2
+=======
+/.venv2
+/get-pip.py
+>>>>>>> ef5dd9969d5dc8208a8d80a390c63d872cd25720
