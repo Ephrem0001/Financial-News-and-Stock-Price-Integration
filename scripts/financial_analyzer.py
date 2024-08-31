@@ -108,3 +108,59 @@ class FinancialAnalyzer:
         weights = ef.max_sharpe()
         portfolio_return, portfolio_volatility, sharpe_ratio = ef.portfolio_performance()
         return portfolio_return, portfolio_volatility, sharpe_ratio
+
+class FinancialAnalyzer2:
+    def __init__(self, file_paths):
+        """
+        Initialize with a list of file paths to CSV data.
+        
+        :param file_paths: List of paths to CSV files containing historical stock data.
+        """
+        self.file_paths = file_paths
+        self.data = self.load_data(file_paths)
+
+    def load_data(self, file_paths):
+        """
+        Load and combine data from multiple CSV files.
+        
+        :param file_paths: List of paths to the CSV files.
+        :return: Combined DataFrame with stock closing prices.
+        """
+        data_frames = []
+        for file_path in file_paths:
+            df = pd.read_csv(file_path, parse_dates=['Date'], index_col='Date')
+            df = df[['Close']].rename(columns={'Close': file_path.split('/')[-1].split('.')[0]})
+            data_frames.append(df)
+
+        # Combine all DataFrames on the Date index
+        combined_data = pd.concat(data_frames, axis=1)
+        combined_data.sort_index(inplace=True)
+        return combined_data
+
+    def calculate_portfolio_weights(self):
+        """
+        Calculate portfolio weights using the historical data from the loaded CSV files.
+        
+        :return: Dictionary of ticker symbols and their corresponding portfolio weights.
+        """
+        data = self.data
+        mu = expected_returns.mean_historical_return(data)
+        cov = risk_models.sample_cov(data)
+        ef = EfficientFrontier(mu, cov)
+        weights = ef.max_sharpe()
+        weights = dict(zip(data.columns, weights.values()))
+        return weights
+
+    def calculate_portfolio_performance(self):
+        """
+        Calculate the portfolio performance using the historical data from the loaded CSV files.
+        
+        :return: Tuple containing the portfolio return, volatility, and Sharpe ratio.
+        """
+        data = self.data
+        mu = expected_returns.mean_historical_return(data)
+        cov = risk_models.sample_cov(data)
+        ef = EfficientFrontier(mu, cov)
+        weights = ef.max_sharpe()
+        portfolio_return, portfolio_volatility, sharpe_ratio = ef.portfolio_performance()
+        return portfolio_return, portfolio_volatility, sharpe_ratio
