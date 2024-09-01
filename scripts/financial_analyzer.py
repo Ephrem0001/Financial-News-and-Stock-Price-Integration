@@ -89,25 +89,6 @@ class FinancialAnalyzer:
         fig = px.line(self.data, x=self.data.index, y=['MACD', 'MACD_Signal'], title='Moving Average Convergence Divergence (MACD)')
         fig.show()
 
-    def calculate_portfolio_weights(self, tickers, start_date, end_date):
-        # Download data for multiple tickers
-        data = yf.download(tickers, start=start_date, end=end_date)['Close']
-        mu = expected_returns.mean_historical_return(data)
-        cov = risk_models.sample_cov(data)
-        ef = EfficientFrontier(mu, cov)
-        weights = ef.max_sharpe()
-        weights = dict(zip(tickers, weights.values()))
-        return weights
-
-    def calculate_portfolio_performance(self, tickers, start_date, end_date):
-        # Download data for multiple tickers
-        data = yf.download(tickers, start=start_date, end=end_date)['Close']
-        mu = expected_returns.mean_historical_return(data)
-        cov = risk_models.sample_cov(data)
-        ef = EfficientFrontier(mu, cov)
-        weights = ef.max_sharpe()
-        portfolio_return, portfolio_volatility, sharpe_ratio = ef.portfolio_performance()
-        return portfolio_return, portfolio_volatility, sharpe_ratio
 
 class FinancialAnalyzer2:
     def __init__(self, file_paths):
@@ -164,3 +145,4 @@ class FinancialAnalyzer2:
         weights = ef.max_sharpe()
         portfolio_return, portfolio_volatility, sharpe_ratio = ef.portfolio_performance()
         return portfolio_return, portfolio_volatility, sharpe_ratio
+
