@@ -59,10 +59,6 @@ class Correlation:
         df[new_column_name] = df[column_name].pct_change()
         return df
     
-    def merge_dataframes(self, df1, df2, how='inner', num_rows=4):
-        aligned_data = pd.merge(df1, df2, left_index=True, right_index=True, how=how)
-        return aligned_data.head(num_rows)
-    
     def aggregate_daily_sentiment(self, df, sentiment_col='sentiment'):
         # Group by the index (date) and compute the average sentiment score for each day
         daily_sentiment = df.groupby(df.index)[sentiment_col].mean().reset_index()
@@ -72,7 +68,11 @@ class Correlation:
         
         return daily_sentiment
 
-    def analyze_correlation_and_plot(self, df, sentiment_col='sentiment', returns_col='Daily Returns'):
+    def merge_dataframes(self, df1, df2):
+        aligned_data = pd.merge(df1, df2, left_index=True, right_index=True, how='inner')
+        return aligned_data
+
+    def analyze_correlation_and_plot(self, df, sentiment_col='average_sentiment', returns_col='Daily Returns'):
         # Calculate the correlation between sentiment and daily returns
         correlation = df[sentiment_col].corr(df[returns_col])
         print("Correlation between sentiment and daily stock returns:", correlation)
@@ -82,12 +82,12 @@ class Correlation:
         plt.show()
         # Plot the heatmap of the correlation matrix
         sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', vmin=-1, vmax=1)
-        plt.title('Sentiment vs Daily Returns Matrix')
+        plt.title(f'Sentiment vs {returns_col} Matrix')
         plt.show()
         
         # Scatterplot to visualize the relationship between sentiment and daily returns
         sns.scatterplot(x=sentiment_col, y=returns_col, data=df)
-        plt.title('Sentiment vs Daily Returns')
+        plt.title(f'Sentiment vs {returns_col}')
         plt.xlabel('Sentiment')
-        plt.ylabel('Daily Returns')
+        plt.ylabel(f'{returns_col}')
         plt.show()
